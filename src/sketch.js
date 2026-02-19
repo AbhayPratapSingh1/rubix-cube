@@ -19,9 +19,10 @@ function setup() {
     points: createVector(0, 0, 0),
     rotate: createVector(radians(0), radians(0), radians(0)),
   };
-  center = createVector(0, 0, 1300);
-  prev = createVector(0, 0);
-  cubes = createCubes(center, 200);
+  // center = createVector(0, 0, 1300);
+  // prev = createVector(0, 0);
+  // cubes = createCubes(center, 200);
+  cube = new Rubix_CUBE(0, 0, 1000, 400);
 }
 
 function mousePressed() {
@@ -33,17 +34,10 @@ function mouseDragged() {
   const change = p5.Vector.sub(current, prev);
   prev = current;
   if (change.x !== 0) {
-    cubes.forEach((cube) => {
-      cube.rotate(0, radians(0.5 * -change.x), 0);
-      // cube.rotate(0, radians(0.5 * -change.x), 0);
-      // cube.rotate(change.x, "x", "z", center);
-    });
+    cube.rotate(0, radians(0.5 * change.x), 0);
   }
   if (change.y !== 0) {
-    cubes.forEach((cube) => {
-      cube.rotate(radians(0.5 * change.y), 0, 0);
-      // cube.rotate(radians(0.5 * change.y), 0, 0);
-    });
+    cube.rotate(radians(0.5 * change.y), 0, 0);
   }
 }
 
@@ -77,6 +71,10 @@ function keyPressed() {
   const bottom = [0, 1, 2, 3, 4, 5, 6, 7, 8];
   const middle = [9, 10, 11, 12, 13, 14, 15, 16, 17];
   const top = [18, 19, 20, 21, 22, 23, 24, 25, 26];
+  if (key === "r") {
+    cube.resetRotation();
+  }
+
   if (key === "w") {
     top.forEach((idx) => {
       cubes[idx].rotate(90, "x", "z", center);
@@ -99,11 +97,11 @@ function keyPressed() {
 function draw() {
   background(0);
   translate(width / 2, height / 2);
-  const shapes = cubes.flatMap((cube) => cube.getFaces());
+  const shapes = cube.getFaces();
   const faces = renderShapes(shapes, camera);
 
   faces.forEach((face) => {
     drawFace(face);
   });
-  noLoop();
+  // noLoop();
 }

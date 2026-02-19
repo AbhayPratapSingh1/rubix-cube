@@ -62,7 +62,6 @@ class Cube {
       color: this.color[i % this.color.length],
       points,
     }));
-    console.log(val.at(-1).color);
 
     return val;
   }
