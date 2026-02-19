@@ -4,12 +4,12 @@
 const COLORS = ["blue", "red", "white", "green", "orange", "yellow"];
 
 class Rubix_CUBE {
-  constructor(x, y, z, size, color = COLORS, strokeColor = "black") {
+  constructor(x, y, z, size, color = COLORS, strokeColor = [0, 0, 0, 140]) {
     this.pos = createVector(x, y, z);
     this.size = size;
     this.colors = color;
     this.stroke = strokeColor;
-    this.rotations = createVector(0, 0, 0);
+    this.rotations = createVector(90, 0, 0);
 
     this.createPoints();
     this.getParts();
@@ -19,11 +19,40 @@ class Rubix_CUBE {
     this.rotations.add(createVector(x, y, z));
   }
 
+  handleRelease() {
+    const delta = 90;
+    while (
+      Math.abs(this.rotations.x) >= delta || Math.abs(this.rotations.y) >= delta
+    ) {
+      if (Math.abs(this.rotations.x) >= delta) {
+        const change = delta * Math.sign(this.rotations.x);
+        this.rotations.x = this.rotations.x - change;
+        this.parts.forEach((path) => path.rotate(change, "y", "z"));
+      }
+      if (Math.abs(this.rotations.y) >= delta) {
+        const change = delta * Math.sign(this.rotations.y);
+        this.rotations.y = this.rotations.y - change;
+        this.parts.forEach((path) => path.rotate(change, "x", "z"));
+      }
+    }
+    this.resetRotation();
+  }
+
   resetRotation() {
+    const delta = 50;
+    if (Math.abs(this.rotations.x) >= delta) {
+      const change = 90 * Math.sign(this.rotations.x);
+      this.parts.forEach((path) => path.rotate(change, "y", "z"));
+    }
+    if (Math.abs(this.rotations.y) >= delta) {
+      const change = 90 * Math.sign(this.rotations.y);
+      this.parts.forEach((path) => path.rotate(change, "x", "z"));
+    }
+
     this.rotations = createVector(0, 0, 0);
   }
 
-  createPoints() {
+  createPoints(delta = 0) {
     const size = this.size / 3;
     const points = [];
     const parts = [];
@@ -35,13 +64,14 @@ class Rubix_CUBE {
           const z = i * size;
           const point = createVector(x, y, z);
           points.push(point);
+          const actualSize = size - delta;
           const part = new Cube(
             x,
             y,
             z,
-            size,
-            size,
-            size,
+            actualSize,
+            actualSize,
+            actualSize,
             this.colors,
             this.stroke,
           );
@@ -65,14 +95,14 @@ class Rubix_CUBE {
 
       this.rotatePoints(
         newPoints,
-        degrees(this.rotations.x),
+        this.rotations.x,
         "y",
         "z",
         this.pos,
       );
       this.rotatePoints(
         newPoints,
-        degrees(this.rotations.y),
+        this.rotations.y,
         "x",
         "z",
         this.pos,
