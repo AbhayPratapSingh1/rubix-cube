@@ -19,9 +19,6 @@ function setup() {
     points: createVector(0, 0, 0),
     rotate: createVector(radians(0), radians(0), radians(0)),
   };
-  // center = createVector(0, 0, 1300);
-  // prev = createVector(0, 0);
-  // cubes = createCubes(center, 200);
   cube = new Rubix_CUBE(0, 0, 1000, 400);
 }
 
@@ -31,7 +28,6 @@ function mousePressed() {
 
 function mouseReleased() {
   cube.handleRelease();
-  console.log("here");
 }
 
 function mouseDragged() {
@@ -98,6 +94,12 @@ function keyPressed() {
     });
   }
 }
+let i = 0;
+const handlerCameraMovement = () => {
+  i = (i + 5) % 360;
+  const val = Math.sin(radians(i)) * 2;
+  camera.points.y += val;
+};
 
 function draw() {
   background(0);
@@ -108,5 +110,5 @@ function draw() {
   faces.forEach((face) => {
     drawFace(face);
   });
-  // noLoop();
+  // handlerCameraMovement();
 }

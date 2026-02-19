@@ -9,7 +9,7 @@ class Rubix_CUBE {
     this.size = size;
     this.colors = color;
     this.stroke = strokeColor;
-    this.rotations = createVector(90, 0, 0);
+    this.rotations = createVector(0, 0, 0);
 
     this.createPoints();
     this.getParts();
@@ -119,4 +119,6 @@ class Rubix_CUBE {
       point[a2] = v2;
     });
   }
+
+  
 }

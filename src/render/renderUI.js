@@ -65,8 +65,8 @@ const renderShapes = (shapes, camera) => {
   );
 
   const clippedShapes = shapesWithDetials.map((shape) => clipFace(shape));
-  const visibleShapes = getVisibleFaces(clippedShapes);
-  const sortedFaces = getSortedFaces(visibleShapes);
+  // const visibleShapes = getVisibleFaces(clippedShapes);
+  const sortedFaces = getSortedFaces(clippedShapes);
   const projections = shapesProjections(sortedFaces);
   return projections;
 };
