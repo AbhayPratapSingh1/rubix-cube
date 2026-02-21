@@ -2,15 +2,6 @@
 
 const isBetween = (min, value, max) => value < max && value > min;
 
-const isCollide = (shape, rect) => {
-  const { pos: { x: x2, z: z2 }, d: d2, w: w2 } = shape;
-  const { pos: { x, z }, d, w } = rect;
-
-  const dx = Math.abs(x2 - x);
-  const dz = Math.abs(z2 - z);
-  return dx <= (w + w2) / 2 && dz <= (d + d2) / 2;
-};
-
 const rotatePointAroundPoint = (p1, p2, da, k1 = "x", k2 = "z") => {
   const dx = p1[k1] - p2[k1];
   const dz = p1[k2] - p2[k2];
@@ -31,7 +22,7 @@ const normal = (p1, p2, p3) => {
   return s2.cross(s1);
 };
 
-const getProspectivePoint = (point, screen = CONFIG.SCREEN.Z) => {
+const getProjectionPoints = (point, screen = CONFIG.SCREEN.Z) => {
   const zUnitVector = createVector(0, 0, 1);
 
   const zProjectionP1 = point.dot(zUnitVector);
@@ -68,7 +59,7 @@ const getAllFacesWithDetail = (objects) => {
 const getSortedFaces = (faces) => faces.sort((a, b) => b.center.z - a.center.z);
 
 const projectionPoint = (point, z = CONFIG.SCREEN.Z) =>
-  getProspectivePoint(point, z);
+  getProjectionPoints(point, z);
 
 const faceProjection = ({ points, ...props }) => {
   const projectionPoints = points.map((point) => projectionPoint(point));
@@ -164,11 +155,4 @@ const rotateVertices = (point, rotations) => {
   point.y = point.y + dy;
   point.z = point.z + dz;
   return point;
-};
-
-const showDescription = (message) => {
-  fill(0);
-  textSize(50);
-  textAlign("center", "center");
-  text(message, 0, 0);
 };
