@@ -12,7 +12,8 @@ const WORLD_ITEMS = {
 // const WORLD_ITEMS.palettes =;
 
 class Cube {
-  constructor(x, y, z, h, w, d, color, strokeColor = "black") {
+  constructor(id, x, y, z, h, w, d, color, strokeColor = "black") {
+    this.id = id;
     color = color || WORLD_ITEMS.palettes;
 
     this.pos = createVector(x, y, z);

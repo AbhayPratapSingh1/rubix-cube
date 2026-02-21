@@ -69,6 +69,9 @@ const createCubes = (center, size, delta = 0) => {
 };
 
 function keyPressed() {
+  if (cube.isUpdating) {
+    return;
+  }
   const bottom = [0, 1, 2, 3, 4, 5, 6, 7, 8];
   const middle = [9, 10, 11, 12, 13, 14, 15, 16, 17];
   const top = [18, 19, 20, 21, 22, 23, 24, 25, 26];
@@ -77,9 +80,7 @@ function keyPressed() {
   }
 
   if (key === "w") {
-    top.forEach((idx) => {
-      cubes[idx].rotate(90, "x", "z", center);
-    });
+    cube.rotateTop();
   }
 
   if (key === "s") {
@@ -93,11 +94,12 @@ function keyPressed() {
       cubes[idx].rotate(90, "x", "z", center);
     });
   }
+  const { x, y, z } = cube.parts[0].pos;
 }
 let i = 0;
 const handlerCameraMovement = () => {
-  i = (i + 5) % 360;
-  const val = Math.sin(radians(i)) * 2;
+  i = (i + 3) % 360;
+  const val = Math.sin(radians(i)) * 1.2;
   camera.points.y += val;
 };
 
@@ -106,9 +108,10 @@ function draw() {
   translate(width / 2, height / 2);
   const shapes = cube.getFaces();
   const faces = renderShapes(shapes, camera);
-
+  cube.update();
   faces.forEach((face) => {
     drawFace(face);
   });
-  // handlerCameraMovement();
+
+  handlerCameraMovement();
 }

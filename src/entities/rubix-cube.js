@@ -1,11 +1,11 @@
 // @ts-nocheck
 // @ts-nocheck;
-
 const COLORS = ["blue", "red", "white", "green", "orange", "yellow"];
 
 class Rubix_CUBE {
   constructor(x, y, z, size, color = COLORS, strokeColor = [0, 0, 0, 140]) {
     this.pos = createVector(x, y, z);
+    this.isUpdating = false;
     this.size = size;
     this.colors = color;
     this.stroke = strokeColor;
@@ -13,6 +13,25 @@ class Rubix_CUBE {
 
     this.createPoints();
     this.getParts();
+    this.updateAngle = 0;
+
+    this.updateConfig = null;
+  }
+
+  update() {
+    if (!this.isUpdating) {
+      return;
+    }
+    if (this.updateConfig.angle === 0) {
+      this.isUpdating = false;
+
+      return;
+    }
+    const { parts, axis1, axis2, delta } = this.updateConfig;
+    this.updateConfig.angle += delta;
+    for (const part of this.updateConfig.parts) {
+      part.rotate(delta, axis1, axis2, createVector(0, 0, 0));
+    }
   }
 
   rotate(x, y, z) {
@@ -20,6 +39,9 @@ class Rubix_CUBE {
   }
 
   handleRelease() {
+    if (this.isUpdating) {
+      return;
+    }
     const delta = 90;
     while (
       Math.abs(this.rotations.x) >= delta || Math.abs(this.rotations.y) >= delta
@@ -27,12 +49,16 @@ class Rubix_CUBE {
       if (Math.abs(this.rotations.x) >= delta) {
         const change = delta * Math.sign(this.rotations.x);
         this.rotations.x = this.rotations.x - change;
-        this.parts.forEach((path) => path.rotate(change, "y", "z"));
+        this.parts.forEach((path) =>
+          path.rotate(change, "y", "z", createVector(0, 0, 0))
+        );
       }
       if (Math.abs(this.rotations.y) >= delta) {
         const change = delta * Math.sign(this.rotations.y);
         this.rotations.y = this.rotations.y - change;
-        this.parts.forEach((path) => path.rotate(change, "x", "z"));
+        this.parts.forEach((path) =>
+          path.rotate(change, "x", "z", createVector(0, 0, 0))
+        );
       }
     }
     this.resetRotation();
@@ -40,25 +66,51 @@ class Rubix_CUBE {
 
   resetRotation() {
     const delta = 50;
+
     if (Math.abs(this.rotations.x) >= delta) {
       const change = 90 * Math.sign(this.rotations.x);
-      this.parts.forEach((path) => path.rotate(change, "y", "z"));
+      this.parts.forEach((path) =>
+        path.rotate(change, "y", "z", createVector(0, 0, 0))
+      );
     }
+
     if (Math.abs(this.rotations.y) >= delta) {
       const change = 90 * Math.sign(this.rotations.y);
-      this.parts.forEach((path) => path.rotate(change, "x", "z"));
+      this.parts.forEach((path) =>
+        path.rotate(change, "x", "z", createVector(0, 0, 0))
+      );
     }
 
     this.rotations = createVector(0, 0, 0);
   }
 
+  gcolors(m) {
+    const val = m % 7;
+    switch (val) {
+      case 0:
+        return ["black"];
+      case 1:
+        return ["white"];
+      case 2:
+        return ["red"];
+      case 3:
+        return ["orange"];
+      case 4:
+        return ["green"];
+      case 5:
+        return ["yellow"];
+      case 6:
+        return ["blue"];
+    }
+  }
   createPoints(delta = 0) {
+    let id = 0;
     const size = this.size / 3;
     const points = [];
     const parts = [];
-    for (let k = -1; k < 2; k++) {
-      for (let j = -1; j < 2; j++) {
-        for (let i = -1; i < 2; i++) {
+    for (let k = -1; k < 2; k += 1) {
+      for (let j = -1; j < 2; j += 1) {
+        for (let i = -1; i < 2; i += 1) {
           const x = k * size;
           const y = j * size;
           const z = i * size;
@@ -66,6 +118,7 @@ class Rubix_CUBE {
           points.push(point);
           const actualSize = size - delta;
           const part = new Cube(
+            id,
             x,
             y,
             z,
@@ -73,6 +126,7 @@ class Rubix_CUBE {
             actualSize,
             actualSize,
             this.colors,
+            // colorPallet[id++],
             this.stroke,
           );
           parts.push(part);
@@ -120,5 +174,26 @@ class Rubix_CUBE {
     });
   }
 
-  
+  getTop() {
+    const maxY = this.parts.map((each) => each.pos.y);
+    const min = Math.min(...maxY);
+    const faces = this.parts.filter((part) => nearEqual(part.pos.y, min, 0.1));
+    return faces;
+  }
+
+  rotateTop(direction = "left") {
+    const top = this.getTop();
+    this.isUpdating = true;
+    this.updateConfig = {
+      angle: 90,
+      delta: -1,
+      parts: top,
+      axis1: "x",
+      axis2: "z",
+    };
+  }
 }
+
+const nearEqual = (a, b, delta = 0.001) => {
+  return Math.abs(a - b) < delta;
+};
