@@ -186,7 +186,7 @@ class Rubix_CUBE {
     this.isUpdating = true;
     this.updateConfig = {
       angle: 90,
-      delta: -1,
+      delta: -5,
       parts: top,
       axis1: "x",
       axis2: "z",

@@ -12,6 +12,7 @@ let cube;
 let camera;
 let cubes;
 let center;
+const view = [];
 
 function setup() {
   createCanvas(windowWidth, windowHeight);
@@ -19,6 +20,15 @@ function setup() {
     points: createVector(0, 0, 0),
     rotate: createVector(radians(0), radians(0), radians(0)),
   };
+  const camLB = {
+    points: createVector(width, -height * 0.6, -700),
+    rotate: createVector(radians(0), radians(20), radians(0)),
+  };
+  const camRB = {
+    points: createVector(-width, -height * 0.6, -700),
+    rotate: createVector(radians(0), radians(-20), radians(0)),
+  };
+  view.push(camLB, camRB);
   cube = new Rubix_CUBE(0, 0, 1000, 400);
 }
 
@@ -106,11 +116,20 @@ const handlerCameraMovement = () => {
 function draw() {
   background(0);
   translate(width / 2, height / 2);
+
   const shapes = cube.getFaces();
   const faces = renderShapes(shapes, camera);
+
+  const viewsFaces = view.map((each) => renderShapes(shapes, each));
+
   cube.update();
   faces.forEach((face) => {
     drawFace(face);
+  });
+  viewsFaces.forEach((faces) => {
+    faces.forEach((face) => {
+      drawFace(face);
+    });
   });
 
   handlerCameraMovement();
