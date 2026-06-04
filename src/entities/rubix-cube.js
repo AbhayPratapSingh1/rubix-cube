@@ -1,5 +1,4 @@
 // @ts-nocheck
-// @ts-nocheck;
 const COLORS = ["blue", "red", "white", "green", "orange", "yellow"];
 
 class Rubix_CUBE {
@@ -22,15 +21,17 @@ class Rubix_CUBE {
     if (!this.isUpdating) {
       return;
     }
-    if (this.updateConfig.angle === 0) {
-      this.isUpdating = false;
 
-      return;
-    }
     const { parts, axis1, axis2, delta } = this.updateConfig;
-    this.updateConfig.angle += delta;
+    this.updateConfig.angle -= Math.abs(delta);
+
     for (const part of this.updateConfig.parts) {
       part.rotate(delta, axis1, axis2, createVector(0, 0, 0));
+    }
+
+    if (this.updateConfig.angle <= 0) {
+      this.isUpdating = false;
+      this.updateConfig = null;
     }
   }
 
@@ -87,22 +88,16 @@ class Rubix_CUBE {
   gcolors(m) {
     const val = m % 7;
     switch (val) {
-      case 0:
-        return ["black"];
-      case 1:
-        return ["white"];
-      case 2:
-        return ["red"];
-      case 3:
-        return ["orange"];
-      case 4:
-        return ["green"];
-      case 5:
-        return ["yellow"];
-      case 6:
-        return ["blue"];
+      case 0: return ["black"];
+      case 1: return ["white"];
+      case 2: return ["red"];
+      case 3: return ["orange"];
+      case 4: return ["green"];
+      case 5: return ["yellow"];
+      case 6: return ["blue"];
     }
   }
+
   createPoints(delta = 0) {
     let id = 0;
     const size = this.size / 3;
@@ -126,7 +121,6 @@ class Rubix_CUBE {
             actualSize,
             actualSize,
             this.colors,
-            // colorPallet[id++],
             this.stroke,
           );
           parts.push(part);
@@ -147,20 +141,8 @@ class Rubix_CUBE {
       const newPoints = points.map((point) => point.copy());
       newPoints.forEach((point) => point.add(this.pos));
 
-      this.rotatePoints(
-        newPoints,
-        this.rotations.x,
-        "y",
-        "z",
-        this.pos,
-      );
-      this.rotatePoints(
-        newPoints,
-        this.rotations.y,
-        "x",
-        "z",
-        this.pos,
-      );
+      this.rotatePoints(newPoints, this.rotations.x, "y", "z", this.pos);
+      this.rotatePoints(newPoints, this.rotations.y, "x", "z", this.pos);
 
       return { color, strokeColor, points: newPoints };
     });
@@ -175,21 +157,104 @@ class Rubix_CUBE {
   }
 
   getTop() {
-    const maxY = this.parts.map((each) => each.pos.y);
-    const min = Math.min(...maxY);
-    const faces = this.parts.filter((part) => nearEqual(part.pos.y, min, 0.1));
-    return faces;
+    const coords = this.parts.map((each) => each.pos.y);
+    const target = Math.min(...coords);
+    return this.parts.filter((part) => nearEqual(part.pos.y, target, 0.1));
   }
 
-  rotateTop(direction = "left") {
-    const top = this.getTop();
+  getBottom() {
+    const coords = this.parts.map((each) => each.pos.y);
+    const target = Math.max(...coords);
+    return this.parts.filter((part) => nearEqual(part.pos.y, target, 0.1));
+  }
+
+  getLeft() {
+    const coords = this.parts.map((each) => each.pos.x);
+    const target = Math.min(...coords);
+    return this.parts.filter((part) => nearEqual(part.pos.x, target, 0.1));
+  }
+
+  getRight() {
+    const coords = this.parts.map((each) => each.pos.x);
+    const target = Math.max(...coords);
+    return this.parts.filter((part) => nearEqual(part.pos.x, target, 0.1));
+  }
+
+  getFront() {
+    const coords = this.parts.map((each) => each.pos.z);
+    const target = Math.max(...coords);
+    return this.parts.filter((part) => nearEqual(part.pos.z, target, 0.1));
+  }
+
+  getBack() {
+    const coords = this.parts.map((each) => each.pos.z);
+    const target = Math.min(...coords);
+    return this.parts.filter((part) => nearEqual(part.pos.z, target, 0.1));
+  }
+
+  rotateTop(isCounterClockwise = false) {
     this.isUpdating = true;
     this.updateConfig = {
       angle: 90,
-      delta: -5,
-      parts: top,
+      delta: isCounterClockwise ? 5 : -5,
+      parts: this.getTop(),
       axis1: "x",
       axis2: "z",
+    };
+  }
+
+  rotateBottom(isCounterClockwise = false) {
+    this.isUpdating = true;
+    this.updateConfig = {
+      angle: 90,
+      delta: isCounterClockwise ? 5 : -5,
+      parts: this.getBottom(),
+      axis1: "x",
+      axis2: "z",
+    };
+  }
+
+  rotateLeft(isCounterClockwise = false) {
+    this.isUpdating = true;
+    this.updateConfig = {
+      angle: 90,
+      delta: isCounterClockwise ? 5 : -5,
+      parts: this.getLeft(),
+      axis1: "y",
+      axis2: "z",
+    };
+  }
+
+  rotateRight(isCounterClockwise = false) {
+    this.isUpdating = true;
+    this.updateConfig = {
+      angle: 90,
+      delta: isCounterClockwise ? 5 : -5,
+      parts: this.getRight(),
+      axis1: "y",
+      axis2: "z",
+    };
+  }
+
+  rotateFront(isCounterClockwise = false) {
+    this.isUpdating = true;
+    this.updateConfig = {
+      angle: 90,
+      delta: isCounterClockwise ? 5 : -5,
+      parts: this.getFront(),
+      axis1: "x",
+      axis2: "y",
+    };
+  }
+
+  rotateBack(isCounterClockwise = false) {
+    this.isUpdating = true;
+    this.updateConfig = {
+      angle: 90,
+      delta: isCounterClockwise ? 5 : -5,
+      parts: this.getBack(),
+      axis1: "x",
+      axis2: "y",
     };
   }
 }

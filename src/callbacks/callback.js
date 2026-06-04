@@ -24,7 +24,27 @@ function keyPressed() {
     return;
   }
 
-  if (key === "w") {
-    states.cube.rotateTop();
+  const isCounterClockwise = keyIsDown(SHIFT);
+  const lowerKey = key.toLowerCase();
+
+  switch (lowerKey) {
+    case 'b':
+      states.cube.rotateFront(isCounterClockwise);
+      break;
+    case 'f':
+      states.cube.rotateBack(isCounterClockwise);
+      break;
+    case 'u':
+      states.cube.rotateTop(isCounterClockwise);
+      break;
+    case 'd':
+      states.cube.rotateBottom(isCounterClockwise);
+      break;
+    case 'l':
+      states.cube.rotateLeft(isCounterClockwise);
+      break;
+    case 'r':
+      states.cube.rotateRight(isCounterClockwise);
+      break;
   }
 }
