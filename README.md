@@ -2,13 +2,13 @@
 
 > An interactive 3D Rubik's cube built entirely from scratch — no WebGL, no 3D libraries, just pure JavaScript and math.
 
-[![Live Demo](https://img.shields.io/badge/demo-LIVE-brightgreen?style=for-the-badge)](https://rubix-cube.onrender.com)
+[![Live Demo](https://img.shields.io/badge/demo-LIVE-brightgreen?style=for-the-badge)](https://rubix-cube-3d.vercel.app)
 
 ---
 
 ## ✨ Demo
 
-**👉 [Try it live →](https://rubix-cube.onrender.com)**
+**👉 [Try it live →](https://rubix-cube-3d.vercel.app)**
 
 Drag to rotate the cube. Press keys to twist layers. Watch it animate in real-time.
 

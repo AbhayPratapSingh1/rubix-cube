@@ -6,7 +6,7 @@ Usage:
     python3 set-url.py [--restore]
 
 Without arguments, reads the URL from site.json and applies it.
-With --restore, puts the https://rubix-cube.onrender.com placeholder back in all files.
+With --restore, puts the https://rubix-cube-3d.vercel.app placeholder back in all files.
 """
 
 import sys
@@ -15,7 +15,7 @@ from pathlib import Path
 
 ROOT = Path(__file__).parent
 FILES = ["README.md", "index.html", "set-url.py"]
-PLACEHOLDER = "https://rubix-cube.onrender.com"
+PLACEHOLDER = "https://rubix-cube-3d.vercel.app"
 
 def apply(url: str) -> None:
     url = url.rstrip("/")
